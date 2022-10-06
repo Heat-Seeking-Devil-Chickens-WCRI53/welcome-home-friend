@@ -51,10 +51,15 @@ const CreatePost = () => {
           {inputDiv('Eye Color:', 'eye_color', true)}
           {inputDiv('Gender:', 'gender')}
           {inputDiv('Pet Photo URL:', 'image_url',)}
-          {textAreaDiv('Last Known Location:', 'last_found')}
           {textAreaDiv('Additional Comments:', 'comments')}
         </div>
 
+        <h4>Last known Location:</h4>
+        <div className="create-post-inputs">
+          {inputDiv('Street Address:', 'street_address', true)}
+          {inputDiv('City:', 'city', true)}
+          {inputDiv('State:', 'state', true)}
+        </div>
 
         <div className="create-post-submit">
           <Button onClick={() => { handleClick() }}>Submit Lost Pet</Button>
@@ -72,7 +77,7 @@ const CreatePost = () => {
 //make a petData a function that returns an Object with all the data from the input fields of the DOM
 //make sure he data is formatted with correct key value pairs
 //NOTE: make sure elements of dataKey match with the second param of inputDiv
-const dataKeys = ['pet_name', 'breed', 'owner', 'address', 'eye_color', 'gender', 'image_url', 'fur_color', 'last_found', 'comments', 'phone_number']
+const dataKeys = ['pet_name', 'breed', 'owner', 'address', 'eye_color', 'gender', 'image_url', 'fur_color', 'street_address', 'city', 'state', 'comments', 'phone_number']
 const petData = () => {
   const dataObj = {}
 
