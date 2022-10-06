@@ -5,9 +5,9 @@ const PORT = 3000;
 const cookieParser = require('cookie-parser');
 const cors = require('cors');
 const apiRouter = require('./routes/api');
-const passportSetup = require('./config/passport');
-const passport = require('passport');
-const session = require('express-session');
+//const passportSetup = require('./config/passport');
+//const passport = require('passport');
+//const session = require('express-session');
 
 
 app.use(express.json());
@@ -15,18 +15,18 @@ app.use(express.urlencoded({ extended: true }));
 app.use(cookieParser());
 app.use(cors());
 
-app.use(session({
-  secret: 'dog cat',
-  resave: false,
-  saveUninitialized: true,
-  cookie: { secure: true }
-}))
+// app.use(session({
+//   secret: 'dog cat',
+//   resave: false,
+//   saveUninitialized: true,
+//   cookie: { secure: true }
+// }))
 
-// Initialize passport 
-app.use(passport.initialize());
-app.use(passport.authenticate('session'));
+// // Initialize passport 
+// app.use(passport.initialize());
+// app.use(passport.authenticate('session'));
 
-app.use('/auth', require('./routes/auth'));
+// app.use('/auth', require('./routes/auth'));
 
 // serve index.html to GET '/'
 app.get('/', (req, res) => {

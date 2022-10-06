@@ -25,7 +25,7 @@ function MyComponent(props) {
 
   return (
     <LoadScript
-      googleMapsApiKey="AIzaSyBHLCkdnOimaN74IGqKOJrFAXslOygEJqI"
+      googleMapsApiKey= 'AIzaSyBHLCkdnOimaN74IGqKOJrFAXslOygEJqI'
     >
       <GoogleMap
         center={center}
