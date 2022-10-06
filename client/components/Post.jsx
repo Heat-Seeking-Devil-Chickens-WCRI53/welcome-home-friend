@@ -43,9 +43,11 @@ const Post = ( {petObj} ) => {
         <p>Owner is: <b>{petObj.owner.toUpperCase()}</b></p>
       <Modal petObj={petObj}></Modal>
       </div>
-      <div className="found-button">
-        <Button onClick={() => { handleClick() }}>Found</Button>
-      </div>
+      {petObj.isUser && (
+        <div className="found-button">
+          <Button onClick={() => { handleClick() }}>Found</Button>
+        </div>
+      )}
     </div>
   )
 }

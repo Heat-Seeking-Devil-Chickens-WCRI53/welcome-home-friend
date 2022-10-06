@@ -1,10 +1,11 @@
 import React from 'react';
-import { usePetContext, usePetUpdateContext } from '../contexts/PostContext.jsx';
+import { usePetContext, usePetUpdateContext, useUserContext } from '../contexts/PostContext.jsx';
 import TextField from '@mui/material/TextField';
 import { Button, inputDiv, textAreaDiv } from '../styles/MUIComponents.jsx'
 
 const CreatePost = () => {
   const addPetData = usePetUpdateContext();
+  const userData = useUserContext();
   const formRef = React.useRef();
 
   // const petDetails = usePetContext()
@@ -15,7 +16,9 @@ const CreatePost = () => {
     // fetch(postURL).then(whtvr).catch(handleerr)
 
     console.log('clicked!');
+    console.log('User Data:', userData);
 
+    // Return if missing fields
     if(!formRef.current.reportValidity()) {
       return;
     }
@@ -23,25 +26,26 @@ const CreatePost = () => {
     fetch('/api/pet', {
       method: 'POST',
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(petData())
+      body: JSON.stringify(petData(userData))
     })
       .then(res => res.json()) //then adding the pet to our state
       .then(data => addPetData(data))
       .catch(err => console.log('Create Post Err:', err))
   }
 
+  /*
+        <h4>Your Information</h4>
+        <div className="create-post-inputs">
+          {inputDiv('Name:', 'owner')}
+          {inputDiv('Phone Number:', 'phone_number')}
+          {textAreaDiv('Address:', 'address')}
+        </div>
+  */
   return (
     <form ref={formRef}>
 
       <div className="create-post">
         <h1>Create a Post</h1>
-
-        <h4>Your Information</h4>
-        <div className="create-post-inputs">
-          {inputDiv('Name:', 'owner', true)}
-          {inputDiv('Phone Number:', 'phone_number', true)}
-          {textAreaDiv('Address:', 'address')}
-        </div>
 
         <h4>Pet's Information</h4>
         <div className="create-post-inputs">
@@ -74,16 +78,31 @@ const CreatePost = () => {
   )
 }
 
+/*
+
+            username: username.value, 
+            password: password.value,
+            owner: owner.value,
+            phone_number: phone_number.value,
+            street_address: street_address.value,
+            city: city.value,
+            state: state.value
+*/
+
 //make a petData a function that returns an Object with all the data from the input fields of the DOM
 //make sure he data is formatted with correct key value pairs
 //NOTE: make sure elements of dataKey match with the second param of inputDiv
-const dataKeys = ['pet_name', 'breed', 'owner', 'address', 'eye_color', 'gender', 'image_url', 'fur_color', 'street_address', 'city', 'state', 'comments', 'phone_number']
-const petData = () => {
+const dataKeys = ['pet_name', 'breed', 'fur_color', 'eye_color', 'gender', 'image_url', 'comments', 'street_address', 'city', 'state']
+const petData = (userData) => {
   const dataObj = {}
+
+
+  console.log(" *** LOAD USER DATA FROM CONTEXT HERE!!! *** ");
+  // Set user info from global context
+  dataObj['owner'] = userData['owner'];
 
   for (let key of dataKeys) {
     if (document.getElementById(key)) {
-      console.log(" *** LOAD USER DATA FROM CONTEXT HERE!!! *** ");
       dataObj[key] = document.getElementById(key).value;
       document.getElementById(key).value = '';
     }

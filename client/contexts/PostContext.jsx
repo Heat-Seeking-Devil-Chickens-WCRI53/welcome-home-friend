@@ -2,7 +2,8 @@ import React, { useContext, useState } from 'react';
 
 const PetContext = React.createContext();
 const PetUpdateContext = React.createContext();
-
+const UserContext = React.createContext();
+const UserUpdateContext = React.createContext();
 
 export function usePetContext() {
   return useContext(PetContext);
@@ -10,6 +11,14 @@ export function usePetContext() {
 
 export function usePetUpdateContext() {
   return useContext(PetUpdateContext);
+}
+
+export function useUserContext() {
+  return useContext(UserContext);
+}
+
+export function useUserUpdateContext() {
+  return useContext(UserUpdateContext);
 }
 
 /*
@@ -57,8 +66,19 @@ const defaultPetData = [
   // }
 ]
 
+const defaultUserData = {
+  username: '',
+  password: '',
+  owner: '',
+  phone_number: '',
+  street_address: '',
+  city: '',
+  state: ''
+}
+
 export function PetDataProvider({ children }) {
   const [petData, setPetData] = useState(defaultPetData);
+  const [userData, setUserData] = useState(defaultUserData);
 
   //why do we need this functionality below?  Why should we ever change state in this way
   //shouldn't we update the database and the then update state with a query?
@@ -79,11 +99,23 @@ export function PetDataProvider({ children }) {
     })
   }
 
+  function addUserData(newUserObj) {
+    setUserData(oldState => {
+      console.log('oldState:', oldState);
+      console.log('PostContext.addUserData.setUserData', newUserObj);
+      return newUserObj;
+    })
+  }
+
   return (
-    <PetContext.Provider value={petData}>
-      <PetUpdateContext.Provider value={addPetData}>
-        {children}
-      </PetUpdateContext.Provider>
-    </PetContext.Provider>
+    <UserContext.Provider value={userData}>
+      <UserUpdateContext.Provider value={addUserData}>
+        <PetContext.Provider value={petData}>
+          <PetUpdateContext.Provider value={addPetData}>
+            {children}
+          </PetUpdateContext.Provider>
+        </PetContext.Provider>
+      </UserUpdateContext.Provider>
+    </UserContext.Provider>
   )
 }

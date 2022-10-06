@@ -20,7 +20,7 @@ const UserPostContainer = () => {
             <h1 className="center-text">Your Lost Friends</h1>
             <div className="post-list">
                 {/* Array of Post Components */}
-                {userPets.map((el, i) => <Post key={i} petObj={el} />)}
+                {userPets.map((el, i) => <Post key={i} petObj={el} isUser={true} />)}
             </div>
         </div>
     )

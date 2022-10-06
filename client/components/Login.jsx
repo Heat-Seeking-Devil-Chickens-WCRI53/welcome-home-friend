@@ -4,16 +4,19 @@ import TextField from '@mui/material/TextField';
 import { useNavigate } from 'react-router-dom';
 //import MyModule from '../styles/MUIComponents.jsx'
 import { Button, inputDiv } from '../styles/MUIComponents.jsx'
-
-
+import { useUserUpdateContext } from "../contexts/PostContext.jsx"
 
 const Login = () => {
     let navigate = useNavigate();
+    const addUserData = useUserUpdateContext();
+    const formRef = React.useRef();
+    console.log('addUserData:', addUserData);
 
     let handleClick = () => {
-        // console.log("***** REMOVE THIS CODE IN LOGIN ******");
-        // navigate('/App');
-        // return;
+        // Return if missing fields
+        if(!formRef.current.reportValidity()) {
+            return;
+        }
 
         let username = document.getElementById('login_Username');
         let password = document.getElementById('login_Password');
@@ -23,33 +26,35 @@ const Login = () => {
             body: JSON.stringify({ username: username.value, password: password.value })
         })
             .then((data) => {
-                console.log('data:', data);
+                console.log('data:', data, data.status);
                 if (data.status !== 200) {
                     throw new Error("Invalid UserName or password");
                 }
                 return data.json();
             })
             .then((json) => {
-                console.log(json);
+                console.log('login response:', json);
+                addUserData(json);
                 navigate('/App');
                 // if (json.status === 200) {
                 // }
             })
             .catch((err) => {
                 console.log("Invalid UserName or password");
-                username.value = '';
-                password.value = '';
                 console.log('error:', err);
             })
     }
 
     return (
-        <>
-            <div>Login</div>
-            <>{inputDiv('Username', 'login_Username', true)}</>
-            <>{inputDiv('Password', 'login_Password', true)}</>
+        <form ref={formRef}>
+            <h4>Login</h4>
+            <div className="create-post-inputs">
+                <>{inputDiv('Username', 'login_Username', true)}</>
+                <>{inputDiv('Password', 'login_Password', true)}</>
+            </div>
+            <Button onClick={() => navigate('/signup')}>Register</Button>
             <Button onClick={() => { handleClick() }}>Submit</Button>
-        </>);
+        </form>);
 }
 //<Button label='Log In'>Login</Button>
 //            <Button onClick={navigate}>Submit</Button>
