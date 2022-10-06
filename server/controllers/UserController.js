@@ -34,7 +34,7 @@ UserController.createUser = (req, res, next) => {
   const { username, password } = req.body;
   db.query('INSERT INTO users (username, password) VALUES ($1, $2) RETURNING *', [username, password])
     .then(data => {
-      console.log(data.rows);
+      
       res.locals.user = data.rows[0];
       return next();
     })
@@ -122,8 +122,10 @@ UserController.checkCookie = (req, res, next) => {
 // during logout, deletes cookie 
 UserController.logoutUser = (req, res, next) => {
   const cookie_id = req.cookies.SSID;
+  res.clearCookie('SSID');
   db.query('DELETE FROM sessions WHERE cookie = $1', [cookie_id])
     .then(data => {
+      console.log(data)
       next();
     })
     .catch(err => next({

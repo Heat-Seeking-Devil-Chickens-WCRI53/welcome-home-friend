@@ -34,8 +34,8 @@ petController.getPet = (req, res, next) => {
 };
 
 petController.userPets = (req, res, next) => {
-  // const { user_id } = res.locals.user;
-  db.query('SELECT * FROM animals WHERE user_id = $1', [1])
+  const { user_id } = res.locals.user;
+  db.query('SELECT * FROM animals WHERE user_id = $1', [user_id])
     .then(data => {
       res.locals.userPets = data.rows;
       return next();
@@ -53,13 +53,13 @@ petController.userPets = (req, res, next) => {
 petController.addPet = (req, res, next) => {
   // getting req.body data of all input
   // name and breed required
-  console.log(req.body);
-  // const { user_id } = res.locals.user;
+  // console.log(req.body);
+  const { user_id } = res.locals.user;
   const {pet_name, phone_number, owner, address, eye_color, gender, image_url, fur_color, last_found, breed} = req.body;
   
   const insertChar ="INSERT INTO animals (user_id, pet_name, owner, phone_number, address, breed, eye_color, gender, image_url, fur_color, last_found, status) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12) RETURNING *"
   // replace 1 with user_id later
-  const value = [1, pet_name, owner, phone_number, address, breed, eye_color, gender, image_url, fur_color, last_found, false];
+  const value = [user_id, pet_name, owner, phone_number, address, breed, eye_color, gender, image_url, fur_color, last_found, false];
 
   db.query(insertChar, value)
     .then(data => {
@@ -79,10 +79,10 @@ petController.addPet = (req, res, next) => {
 petController.foundPet = (req, res, next) => {
   // getting req.body data of all input
   // name and breed required
-  const {_id} = req.body; 
-  console.log(_id);
-
-  db.query('DELETE FROM animals WHERE _id = ($1) RETURNING *;', [_id])
+  // const {_id} = req.body; 
+  // console.log(_id);
+  const { user_id } = res.locals.user;
+  db.query('DELETE FROM animals WHERE user_id = $1 RETURNING *;', [user_id])
     .then(data => {
       res.locals.foundPet = data.rows;
       return next();
