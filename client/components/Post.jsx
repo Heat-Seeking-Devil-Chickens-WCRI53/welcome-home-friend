@@ -2,7 +2,8 @@ import React from "react";
 import Modal from "./PostModal.jsx"
 import pushpin from '../images/randoogle_Thumbtack_Pushpin.svg';
 import { usePetUpdateContext } from "../contexts/PostContext.jsx";
-import Button from '@mui/material/Button';
+import { Button } from '../styles/MUIComponents.jsx'
+
 
 const Post = ( {petObj} ) => {
   //petObj will be a giant object with key value pairs of:
@@ -13,6 +14,18 @@ const Post = ( {petObj} ) => {
 
   function loadImg(url) {
     if (url) return <img className="lost-pet-pic" src={petObj.image_url}></img>
+  }
+
+  function handleClick() {
+    fetch('/api/found', {
+      method: 'POST',
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify( {_id: petObj._id} )
+    })
+      .then(() => {
+        addPetData({DELETEID: petObj._id});
+      })
+      .catch(err => console.log(err))
   }
 
   return (
@@ -31,32 +44,7 @@ const Post = ( {petObj} ) => {
       <Modal petObj={petObj}></Modal>
       </div>
       <div className="found-button">
-      <Button
-            className="found-btn"
-            size="large"
-            variant="contained"
-            sx={{
-              marginTop: '20px',
-              backgroundColor: '',
-              color: 'white',
-              '&:hover': {
-                backgroundColor: 'orange',
-                color: '#222'
-              },
-            }}
-
-         onClick={() => {
-          fetch('/api/found', {
-            method: 'POST',
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify( {_id: petObj._id} )
-          })
-            .then(() => {
-              addPetData({DELETEID: petObj._id});
-            })
-            .catch(err => console.log(err))
-        }}
-      >Found</Button>
+        <Button onClick={() => { handleClick() }}>Found</Button>
       </div>
     </div>
   )
