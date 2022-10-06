@@ -29,7 +29,11 @@ const CreatePost = () => {
       body: JSON.stringify(petData(userData))
     })
       .then(res => res.json()) //then adding the pet to our state
-      .then(data => addPetData(data))
+      .then(data => {
+        // ALSO ADD IT TO USER DATA ARRAY!!!
+        addPetData(data);
+        
+      })
       .catch(err => console.log('Create Post Err:', err))
   }
 
@@ -100,6 +104,10 @@ const petData = (userData) => {
   console.log(" *** LOAD USER DATA FROM CONTEXT HERE!!! *** ");
   // Set user info from global context
   dataObj['owner'] = userData['owner'];
+
+  /*
+
+  */
 
   for (let key of dataKeys) {
     if (document.getElementById(key)) {

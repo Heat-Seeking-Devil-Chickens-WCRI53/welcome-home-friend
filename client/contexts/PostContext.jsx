@@ -73,7 +73,8 @@ const defaultUserData = {
   phone_number: '',
   street_address: '',
   city: '',
-  state: ''
+  state: '',
+  userPetData: []
 }
 
 export function PetDataProvider({ children }) {
@@ -99,10 +100,12 @@ export function PetDataProvider({ children }) {
     })
   }
 
-  function addUserData(newUserObj) {
+  function addUserData(newUserObj, pets=[]) {
     setUserData(oldState => {
       console.log('oldState:', oldState);
+      //console.log('pets:', pets);
       console.log('PostContext.addUserData.setUserData', newUserObj);
+      //pets.forEach((pet) => newUserObj.userPetData.push(pet));
       return newUserObj;
     })
   }
