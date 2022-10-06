@@ -8,31 +8,48 @@ const router = express.Router();
 
 // Check for cookie after user signs in, display all lost pets
 router.get('/', 
-    // UserController.checkCookie,  // uncomment when frontend is implemented redirect user to landing page
+    UserController.checkCookie, 
     petController.getPet, 
     (req, res) => {
     return res.status(200).json(res.locals.pets) 
 });
 
+// Same as above but used for Google OAuth. No need to check for cookie
+router.get('/google',
+    petController.getPet, 
+    (req, res) => {
+    console.log(req.cookies.google_id);
+    // res.send('this is your profile -' + req.user.username);
+    return res.status(200).json(res.locals.pets) 
+});
+
 // Displays current user's lost pets
-router.get('/user', petController.userPets, (req, res) => {
+router.get('/user', 
+    UserController.checkCookie, 
+    petController.userPets, 
+    (req, res) => {
+    console.log(res.locals.userPets);
     return res.status(200).json(res.locals.userPets);
 })
 
 // Displays landing page's limited pet info
-router.get('/landing', petController.getLanding, (req, res) => {
+router.get('/landing', 
+    petController.getLanding, 
+    (req, res) => {
+    // res.send('this is your profile -' + req.user.username);
     return res.status(200).json(res.locals.pets);
 })
 
 
 router.post('/pet',
-    // UserController.checkCookie,
+    UserController.checkCookie,
     petController.addPet, 
     (req, res) => {
     return res.status(200).json(res.locals.newPet); 
 });
 
-router.post('/found', 
+router.post('/found',
+    UserController.checkCookie,
     petController.foundPet,  
     (req, res) => {
     return res.status(200).json(res.locals.foundPet); 
@@ -57,10 +74,14 @@ router.post('/login',
     res.status(200).json(res.locals.user)
 });
 
-router.post('/logout', 
+router.get('/logout', 
     UserController.logoutUser, 
     (req, res) => {
-    res.status(200).json({})
+    res.status(200).json('Logged out successfully')
 });
+
+// router.post('/location', petController.getLocation, (req, res) => {
+//     res.status(200).json(res.locals.location);
+// })
 
 module.exports = router;
