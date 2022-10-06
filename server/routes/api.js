@@ -42,6 +42,7 @@ router.get('/landing',
 
 
 router.post('/pet',
+    petController.getLocation,
     UserController.checkCookie,
     petController.addPet, 
     (req, res) => {
@@ -80,8 +81,8 @@ router.get('/logout',
     res.status(200).json('Logged out successfully')
 });
 
-// router.post('/location', petController.getLocation, (req, res) => {
-//     res.status(200).json(res.locals.location);
-// })
+router.post('/location', petController.getLocation, (req, res) => {
+    res.status(200).json('Location');
+})
 
 module.exports = router;

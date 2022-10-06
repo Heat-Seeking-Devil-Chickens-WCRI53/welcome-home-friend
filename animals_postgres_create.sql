@@ -20,10 +20,9 @@ CREATE TABLE public.animals (
 	"image_url" varchar,
 	"breed" varchar,
 	"fur_color" varchar,
-	"latitude" varchar,
-	"longitude" varchar,
-	"status" BOOLEAN NOT NULL,
-	"google_id" varchar
+	"lat" varchar,
+	"lng" varchar,
+	"status" BOOLEAN NOT NULL
 );
 
 

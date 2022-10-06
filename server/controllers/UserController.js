@@ -31,8 +31,8 @@ UserController.verifyUser = (req, res, next) => {
 
 // during signup, stores new username/pw to db
 UserController.createUser = (req, res, next) => {
-  const { username, password } = req.body;
-  db.query('INSERT INTO users (username, password) VALUES ($1, $2) RETURNING *', [username, password])
+  const { username, password, owner, phone_number, street_address, city, state } = req.body;
+  db.query('INSERT INTO users (username, password, owner, phone_number, street_address, city, state) VALUES ($1, $2, $3, $4, $5, $6, $7) RETURNING *', [username, password, owner, phone_number, street_address, city, state])
     .then(data => {
       
       res.locals.user = data.rows[0];

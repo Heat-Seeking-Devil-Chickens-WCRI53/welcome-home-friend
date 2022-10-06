@@ -20,7 +20,7 @@ petController.getLanding = (req, res, next) => {
 
 petController.getPet = (req, res, next) => {
   //use client in here -> might be using query here ?
-  console.log('in petController.getPet');
+  // console.log('in petController.getPet');
   // console.log(req.user);
   // get google_id from req.cookies
   // console.log(req.cookies.google_id);
@@ -56,34 +56,33 @@ petController.userPets = (req, res, next) => {
     }))
 }
 
-// petController.getLocation = (req, res, next) => {
-//   const { street_address, city, state } = req.body;
-//   console.log(street_address);
-//   console.log(city);
-//   console.log(state);
-//   axios.get(`https://maps.googleapis.com/maps/api/geocode/json?address=${street_address},+${city},+${state}&key=${process.env.GOOGLE_API_KEY}`)
-//     .then(res => {
-//       console.log(res.data);
-//       res.locals.location = res.data;
-//       next();
-//     });
-// }
+petController.getLocation = (req, res, next) => {
+  const { street_address, city, state } = req.body;
+
+  // Make an API call to this url to convert street_address, city, state to latitude/longitude
+  axios.get(`https://maps.googleapis.com/maps/api/geocode/json?address=${street_address},+${city},+${state}&key=AIzaSyBHLCkdnOimaN74IGqKOJrFAXslOygEJqI`)
+    .then(data => {
+      res.locals.location = data.data.results[0].geometry.location
+      console.log(res.locals.location);
+      next();
+    })
+    .catch(err => console.log(err));
+}
 
 
 petController.addPet = (req, res, next) => {
   // getting req.body data of all input
   // name and breed required
-  // console.log(req.body);
-  const { user_id } = res.locals.user;
-  const {pet_name, phone_number, owner, address, eye_color, gender, image_url, fur_color, last_found, breed} = req.body;
-
-  // Make an API call to this url to convert street_address, city, state to latitude/longitude
-  // https://maps.googleapis.com/maps/api/geocode/json?address=${street_address},+${city},+${state}&key=AIzaSyBRacG1Uw6S2XcqqqA50dnaTRUSwiJ2Gg4`
-  // `https://maps.googleapis.com/maps/api/geocode/json?address=1243 S Broadway,+Santa Ana,+CA&key=AIzaSyBRacG1Uw6S2XcqqqA50dnaTRUSwiJ2Gg4`
+  // address or user_address???
+  const {pet_name, owner, address, eye_color, gender, image_url, fur_color, breed } = req.body;
+  // const { user_id } = res.locals.user;
+  const { lat, lng } = res.locals.location;
+  console.log(lat)
+  console.log(lng)
   
-  const insertChar ="INSERT INTO animals (user_id, pet_name, owner, phone_number, address, breed, eye_color, gender, image_url, fur_color, last_found, status) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12) RETURNING *"
+  const insertChar ="INSERT INTO animals (user_id, pet_name, owner, user_address, breed, eye_color, gender, image_url, fur_color, status, lat, lng) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12) RETURNING *"
   // replace 1 with user_id later
-  const value = [user_id, pet_name, owner, phone_number, address, breed, eye_color, gender, image_url, fur_color, last_found, false];
+  const value = [1, pet_name, owner, address, breed, eye_color, gender, image_url, fur_color, false, lat, lng];
 
   db.query(insertChar, value)
     .then(data => {
