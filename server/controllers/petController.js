@@ -1,9 +1,11 @@
 const db = require('../models/models');
+const axios = require('axios');
 const petController = {};
 
 petController.getLanding = (req, res, next) => {
   db.query('SELECT pet_name, image_url FROM animals;')
     .then(data => {
+      console.log(data);
       res.locals.pets = data.rows;
       return next();
     })
@@ -17,12 +19,16 @@ petController.getLanding = (req, res, next) => {
 };
 
 petController.getPet = (req, res, next) => {
-  // write code here
   //use client in here -> might be using query here ?
-  db.query('SELECT * FROM animals')
+  // console.log('in petController.getPet');
+  // console.log(req.user);
+  // get google_id from req.cookies
+  // console.log(req.cookies.google_id);
+  // Old query: SELECT * FROM animals
+  db.query('SELECT a.*, u.username, u.street_address, u.phone_number FROM animals AS a INNER JOIN users AS u ON u.user_id = a.user_id;')
     .then(data => {
       res.locals.pets = data.rows;
-      next();
+      return next();
     })
     .catch(err => next({
       log: 'Express error in petController.getPet',
@@ -34,8 +40,13 @@ petController.getPet = (req, res, next) => {
 };
 
 petController.userPets = (req, res, next) => {
-  // const { user_id } = res.locals.user;
-  db.query('SELECT * FROM animals WHERE user_id = $1', [1])
+  const { user_id } = res.locals.user;
+  console.log('inside petController.userPets');
+  console.log(user_id);
+  // console.log('in petController.userPets');
+  // console.log(req.user.google_id);
+  // Old query: SELECT * FROM animals WHERE user_id = $1
+  db.query('SELECT a.*, u.username, u.street_address, u.phone_number FROM animals AS a INNER JOIN users AS u ON u.user_id = a.user_id WHERE a.user_id = $1;', [user_id])
     .then(data => {
       res.locals.userPets = data.rows;
       return next();
@@ -49,17 +60,33 @@ petController.userPets = (req, res, next) => {
     }))
 }
 
+petController.getLocation = (req, res, next) => {
+  const { street_address, city, state } = req.body;
+
+  // Make an API call to this url to convert street_address, city, state to latitude/longitude
+  axios.get(`https://maps.googleapis.com/maps/api/geocode/json?address=${street_address},+${city},+${state}&key=AIzaSyBHLCkdnOimaN74IGqKOJrFAXslOygEJqI`)
+    .then(data => {
+      res.locals.location = data.data.results[0].geometry.location
+      console.log(res.locals.location);
+      next();
+    })
+    .catch(err => console.log(err));
+}
+
 
 petController.addPet = (req, res, next) => {
   // getting req.body data of all input
   // name and breed required
-  console.log(req.body);
-  // const { user_id } = res.locals.user;
-  const {pet_name, phone_number, owner, address, eye_color, gender, image_url, fur_color, last_found, breed} = req.body;
+  // address or user_address???
+  const {pet_name, owner, eye_color, gender, image_url, fur_color, breed } = req.body;
+  const { user_id } = res.locals.user;
+  const { lat, lng } = res.locals.location;
+  console.log(lat)
+  console.log(lng)
   
-  const insertChar ="INSERT INTO animals (user_id, pet_name, owner, phone_number, address, breed, eye_color, gender, image_url, fur_color, last_found, status) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12) RETURNING *"
+  const insertChar ="INSERT INTO animals (user_id, pet_name, owner, breed, eye_color, gender, image_url, fur_color, status, lat, lng) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11) RETURNING *"
   // replace 1 with user_id later
-  const value = [1, pet_name, owner, phone_number, address, breed, eye_color, gender, image_url, fur_color, last_found, false];
+  const value = [ user_id, pet_name, owner, breed, eye_color, gender, image_url, fur_color, false, lat, lng];
 
   db.query(insertChar, value)
     .then(data => {
@@ -79,10 +106,10 @@ petController.addPet = (req, res, next) => {
 petController.foundPet = (req, res, next) => {
   // getting req.body data of all input
   // name and breed required
-  const {_id} = req.body; 
-  console.log(_id);
-
-  db.query('DELETE FROM animals WHERE _id = ($1) RETURNING *;', [_id])
+  console.log(res.locals.user);
+  const { user_id } = res.locals.user;
+  console.log(user_id);
+  db.query('DELETE FROM animals WHERE user_id = $1 RETURNING *;', [user_id])
     .then(data => {
       res.locals.foundPet = data.rows;
       return next();

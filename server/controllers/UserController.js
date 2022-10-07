@@ -31,10 +31,10 @@ UserController.verifyUser = (req, res, next) => {
 
 // during signup, stores new username/pw to db
 UserController.createUser = (req, res, next) => {
-  const { username, password } = req.body;
-  db.query('INSERT INTO users (username, password) VALUES ($1, $2) RETURNING *', [username, password])
+  const { username, password, owner, phone_number, street_address, city, state } = req.body;
+  db.query('INSERT INTO users (username, password, owner, phone_number, street_address, city, state) VALUES ($1, $2, $3, $4, $5, $6, $7) RETURNING *', [username, password, owner, phone_number, street_address, city, state])
     .then(data => {
-      console.log(data.rows);
+      
       res.locals.user = data.rows[0];
       return next();
     })
@@ -101,12 +101,15 @@ UserController.setCookie = (req, res, next) => {
 
 // checks if user has pre-existing session
 UserController.checkCookie = (req, res, next) => {
+  console.log(req.cookies.SSID);
   db.query('SELECT * FROM sessions WHERE cookie = $1', [req.cookies.SSID])
     .then(data => {
+      // console.log(data.rows);
       if (data.rows.length === 0) {
         return res.status(401).json('Unauthorized');
       }
       res.locals.user = data.rows[0];
+
       return next();
     })
     .catch(err => next({
@@ -122,8 +125,10 @@ UserController.checkCookie = (req, res, next) => {
 // during logout, deletes cookie 
 UserController.logoutUser = (req, res, next) => {
   const cookie_id = req.cookies.SSID;
+  res.clearCookie('SSID');
   db.query('DELETE FROM sessions WHERE cookie = $1', [cookie_id])
     .then(data => {
+      console.log(data)
       next();
     })
     .catch(err => next({
@@ -133,6 +138,14 @@ UserController.logoutUser = (req, res, next) => {
         err: `UserController.logoutUser: ERROR: ${err}`
       }
     }))
+}
+
+UserController.checkGoogleAuth = (req, res, next) => {
+  if (!req.user) {
+    return res.send('going to login page');
+  } else {
+    return next();
+  }
 }
 
 

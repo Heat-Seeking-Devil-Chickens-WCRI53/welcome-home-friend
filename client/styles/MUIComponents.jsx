@@ -43,6 +43,47 @@ export const inputDiv = (label, key, requiredBool) => {
     )
 };
 
+export const inputPasswordDiv = (label, key, requiredBool) => {
+    return (
+        <div className="create-post-text-field">
+            <TextField
+                id={key}
+                label={label}
+                variant="outlined"
+                size="small"
+                type="password"
+                sx={{
+                    width: '100%',
+                    '& label': {
+                        fontSize: '0.8rem',
+                    },
+                    '& label.Mui-focused': {
+                        color: '#333',
+                    },
+                    '& .MuiInput-underline:after': {
+                        borderBottomColor: '#333',
+                    },
+                    '& .MuiOutlinedInput-root': {
+                        '& fieldset': {
+                            borderColor: '#333',
+                        },
+                        '& input': {
+                            fontSize: '0.8rem',
+                        },
+                        '&:hover fieldset': {
+                            borderColor: 'orange',
+                        },
+                        '&.Mui-focused fieldset': {
+                            borderColor: '#333',
+                        },
+                    },
+                }}
+                required={requiredBool}
+            />
+        </div>
+    )
+};
+
 export const textAreaDiv = (label, key) => {
     return (
         <div className="create-post-text-field">
@@ -102,6 +143,7 @@ export const Button = (props) => {
         </StyledButton>
     );
 }
+
 // const styles = () => ({ ... });
 // const BrandButton = ({ classes, color, children }) => {
 
