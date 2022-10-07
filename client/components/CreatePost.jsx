@@ -1,5 +1,5 @@
 import React from 'react';
-import { usePetContext, usePetUpdateContext, useUserContext } from '../contexts/PostContext.jsx';
+import { usePetContext, usePetUpdateContext, useUserContext, useUserUpdateContext, useUserPetsUpdateContext} from '../contexts/PostContext.jsx';
 import TextField from '@mui/material/TextField';
 import { Button, inputDiv, textAreaDiv } from '../styles/MUIComponents.jsx'
 
@@ -7,6 +7,8 @@ const CreatePost = () => {
   const addPetData = usePetUpdateContext();
   const userData = useUserContext();
   const formRef = React.useRef();
+  const addUserData = useUserUpdateContext();
+  const addUserPetsData = useUserPetsUpdateContext();
 
   // const petDetails = usePetContext()
   // _id (req), pet_name (req), owner, address, eye_color, gender, image_url, fur_color, last_found, comments
@@ -32,7 +34,8 @@ const CreatePost = () => {
       .then(data => {
         // ALSO ADD IT TO USER DATA ARRAY!!!
         addPetData(data);
-        
+        console.log('adding data to user:', data);
+        addUserPetsData(data);
       })
       .catch(err => console.log('Create Post Err:', err))
   }
@@ -101,13 +104,10 @@ const petData = (userData) => {
   const dataObj = {}
 
 
+  console.log('userData:', userData);
   console.log(" *** LOAD USER DATA FROM CONTEXT HERE!!! *** ");
   // Set user info from global context
   dataObj['owner'] = userData['owner'];
-
-  /*
-
-  */
 
   for (let key of dataKeys) {
     if (document.getElementById(key)) {
@@ -115,6 +115,7 @@ const petData = (userData) => {
       document.getElementById(key).value = '';
     }
   }
+  console.log('dataObj:', dataObj);
 
   return dataObj;
 }

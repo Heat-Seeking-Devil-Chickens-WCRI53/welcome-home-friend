@@ -2,10 +2,13 @@ import React, { useTransition } from 'react';
 import TextField from '@mui/material/TextField';
 import { Button, inputDiv , textAreaDiv } from '../styles/MUIComponents.jsx'
 import { useNavigate } from 'react-router-dom';
+import { useUserUpdateContext } from "../contexts/PostContext.jsx"
 
 const SignUp = () => {
     let navigate = useNavigate();
     const formRef = React.useRef();
+    const addUserData = useUserUpdateContext();
+
 
     const handleClick = () => {
 
@@ -40,6 +43,8 @@ const SignUp = () => {
         })
             .then(res => res.json())
             .then(data => {
+                console.log('signup data resp:', data);
+                addUserData(data);
                 navigate('/app');
             })
             .catch(err => {

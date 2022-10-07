@@ -4,6 +4,8 @@ const PetContext = React.createContext();
 const PetUpdateContext = React.createContext();
 const UserContext = React.createContext();
 const UserUpdateContext = React.createContext();
+const UserPetsContext = React.createContext();
+const UserPetsUpdateContext = React.createContext();
 
 export function usePetContext() {
   return useContext(PetContext);
@@ -19,6 +21,14 @@ export function useUserContext() {
 
 export function useUserUpdateContext() {
   return useContext(UserUpdateContext);
+}
+
+export function useUserPetsContext() {
+  return useContext(UserPetsContext);
+}
+
+export function useUserPetsUpdateContext() {
+  return useContext(UserPetsUpdateContext);
 }
 
 /*
@@ -74,12 +84,18 @@ const defaultUserData = {
   street_address: '',
   city: '',
   state: '',
-  userPetData: []
 }
+
+const defaultUserPetsData = [
+
+]
+
 
 export function PetDataProvider({ children }) {
   const [petData, setPetData] = useState(defaultPetData);
   const [userData, setUserData] = useState(defaultUserData);
+  const [usePetData, setUserPetData] = useState(defaultUserPetsData);
+
 
   //why do we need this functionality below?  Why should we ever change state in this way
   //shouldn't we update the database and the then update state with a query?
@@ -100,24 +116,30 @@ export function PetDataProvider({ children }) {
     })
   }
 
-  function addUserData(newUserObj, pets=[]) {
+  function addUserData(newUserObj) {
     setUserData(oldState => {
-      console.log('oldState:', oldState);
-      //console.log('pets:', pets);
-      console.log('PostContext.addUserData.setUserData', newUserObj);
-      //pets.forEach((pet) => newUserObj.userPetData.push(pet));
       return newUserObj;
+    })
+  }
+
+  function addUserPetData(newPetObj) {
+    setUserPetData(oldState => {
+      return [...oldState, newPetObj];
     })
   }
 
   return (
     <UserContext.Provider value={userData}>
       <UserUpdateContext.Provider value={addUserData}>
-        <PetContext.Provider value={petData}>
-          <PetUpdateContext.Provider value={addPetData}>
-            {children}
-          </PetUpdateContext.Provider>
-        </PetContext.Provider>
+        <UserPetsContext.Provider value={usePetData}>
+          <UserPetsUpdateContext.Provider value={addUserPetData}>
+            <PetContext.Provider value={petData}>
+              <PetUpdateContext.Provider value={addPetData}>
+                {children}
+              </PetUpdateContext.Provider>
+            </PetContext.Provider>
+          </UserPetsUpdateContext.Provider>
+        </UserPetsContext.Provider>
       </UserUpdateContext.Provider>
     </UserContext.Provider>
   )

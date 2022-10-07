@@ -25,7 +25,7 @@ const mapStyle = {
 
 function MyComponent(props) {
   const petArr = usePetContext();
-
+  console.log(petArr);
 
 
   const [selected, setSelected] = useState({});
@@ -44,20 +44,22 @@ function MyComponent(props) {
         mapContainerStyle={mapStyle}
       >
         { 
-          // arrOfLocationsinDiagonal.map(item => {
-          //   return (
-          //     <Marker key={item.name} position={item.location} onClick={() => onSelect(item)} />
-          //   )
-          // })
+          petArr.map(item => {
+            // let location = {lat: item.lat, lng: item.lng};
+            item.location = {lat: parseFloat(item.lat), lng: parseFloat(item.lng)};
+            return (
+              <Marker key={item.name} position={item.location} onClick={() => onSelect(item)} />
+            )
+          })
         } 
-        {
+        {/* {
           selected.location &&
           (
             <InfoWindow position={selected.location} clickable={true} onCloseClick={() => setSelected({})}>
-              <h1>TEST PLACEHOLDER</h1>
+              
             </InfoWindow>
           )
-        }
+        } */}
         <></>
       </GoogleMap>
     </LoadScript>
