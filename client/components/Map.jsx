@@ -19,7 +19,7 @@ const center = {
 // }
 
 const mapStyle = {
-  height: '85%',
+  height: '50vh',
   width: '100%',
 }
 
