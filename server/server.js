@@ -2,51 +2,43 @@ const path = require('path');
 const express = require('express');
 const app = express();
 const PORT = 3000;
-// const db = require('./db') // grabbing db from inside the other folders ... might not be needed here?
-
+const cookieParser = require('cookie-parser');
+const cors = require('cors');
 const apiRouter = require('./routes/api');
+//const passportSetup = require('./config/passport');
+//const passport = require('passport');
+//const session = require('express-session');
 
-// app.use(express.json());   on line 36!
 
+app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
+app.use(cookieParser());
+app.use(cors());
 
+// app.use(session({
+//   secret: 'dog cat',
+//   resave: false,
+//   saveUninitialized: true,
+//   cookie: { secure: true }
+// }))
 
+// // Initialize passport 
+// app.use(passport.initialize());
+// app.use(passport.authenticate('session'));
 
-// This section is for grabbing data from server to SQL database //
-// var pg = require('pg');
-//or native libpq bindings
-//var pg = require('pg').native
+// app.use('/auth', require('./routes/auth'));
 
-// var conString = "postgres://thszliqh:f6_hpjl5OD2XMZ62pWetNaCNOuOcDeGK@heffalump.db.elephantsql.com/thszliqh" //Can be found in the Details page
-// var client = new pg.Client(conString);
-// client.connect(function(err) {
-//   if(err) {
-//     return console.error('could not connect to postgres', err);
-//   }
-//   client.query('SELECT * FROM "animals"', function(err, result) {
-//     if(err) {
-//       return console.error('error running query', err);
-//     }
-//     console.log(result.rows[0].theTime);
-//     // >> output: 2018-08-23T14:02:57.117Z
-//     client.end();
-//   });
-// });
+// serve index.html to GET '/'
+app.get('/', (req, res) => {
+  return res.redirect('/api/landing');
+})
 
-/**
- * handle parsing request body
- */
- app.use(express.json());
-//  app.use(express.urlencoded({ extended: true }));
+app.use('/api', apiRouter);
 
- /**
-  * define route handlers
-  */
-  app.use('/api', apiRouter);
-
- // catch-all route handler for any requests to an unknown route
+// catch-all route handler for any requests to an unknown route
  app.use((req, res) => res.status(404).send('This is not the page you\'re looking for...'));
 
-//global error handler
+// global error handler
 app.use((err, req, res, next) => {
   const defaultErr = {
     log: 'Express error handler caught unknown middleware error',
@@ -61,4 +53,5 @@ app.use((err, req, res, next) => {
 app.listen(PORT, () => {
   console.log(`Server is running at http://localhost${PORT}...`)
 })
+
 module.exports = app;

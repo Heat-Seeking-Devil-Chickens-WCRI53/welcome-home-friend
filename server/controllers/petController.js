@@ -1,62 +1,126 @@
 const db = require('../models/models');
+const axios = require('axios');
 const petController = {};
 
+petController.getLanding = (req, res, next) => {
+  db.query('SELECT pet_name, image_url FROM animals;')
+    .then(data => {
+      console.log(data);
+      res.locals.pets = data.rows;
+      return next();
+    })
+    .catch(err => next({
+      log: 'Express error in petController.getLanding',
+      status: 400,
+      message: {
+        err: `petController.getLanding: ERROR: ${err}`
+      }
+    }))
+};
 
 petController.getPet = (req, res, next) => {
-  // write code here
   //use client in here -> might be using query here ?
-  db.query('SELECT * FROM animals', (err, result)=>{
-    if (err) {
-      console.log(err);
-    } else {
-      res.locals.rows = result.rows; //this is an array
-    }
-    return next();
-  })
+  // console.log('in petController.getPet');
+  // console.log(req.user);
+  // get google_id from req.cookies
+  // console.log(req.cookies.google_id);
+  // Old query: SELECT * FROM animals
+  db.query('SELECT a.*, u.username, u.street_address, u.phone_number FROM animals AS a INNER JOIN users AS u ON u.user_id = a.user_id;')
+    .then(data => {
+      res.locals.pets = data.rows;
+      return next();
+    })
+    .catch(err => next({
+      log: 'Express error in petController.getPet',
+      status: 400,
+      message: {
+        err: `petController.getPet: ERROR: ${err}`
+      }
+    }))
 };
+
+petController.userPets = (req, res, next) => {
+  const { user_id } = res.locals.user;
+  console.log('inside petController.userPets');
+  console.log(user_id);
+  // console.log('in petController.userPets');
+  // console.log(req.user.google_id);
+  // Old query: SELECT * FROM animals WHERE user_id = $1
+  db.query('SELECT a.*, u.username, u.street_address, u.phone_number FROM animals AS a INNER JOIN users AS u ON u.user_id = a.user_id WHERE a.user_id = $1;', [user_id])
+    .then(data => {
+      res.locals.userPets = data.rows;
+      return next();
+    })
+    .catch(err => next({
+      log: 'Express error in petController.userPets',
+      status: 400,
+      message: {
+        err: `petController.userPets: ERROR: ${err}`
+      }
+    }))
+}
+
+petController.getLocation = (req, res, next) => {
+  const { street_address, city, state } = req.body;
+
+  // Make an API call to this url to convert street_address, city, state to latitude/longitude
+  axios.get(`https://maps.googleapis.com/maps/api/geocode/json?address=${street_address},+${city},+${state}&key=AIzaSyBHLCkdnOimaN74IGqKOJrFAXslOygEJqI`)
+    .then(data => {
+      res.locals.location = data.data.results[0].geometry.location
+      console.log(res.locals.location);
+      next();
+    })
+    .catch(err => console.log(err));
+}
+
 
 petController.addPet = (req, res, next) => {
   // getting req.body data of all input
   // name and breed required
-  const {pet_name, phone_number, owner, address, eye_color, gender, image_url, fur_color, last_found, type, comments} = req.body;
-  let {_id} = req.body;
-  _id = Math.floor(Math.random() * 10000000); //new Date().getTime()  
-  console.log(_id);
+  // address or user_address???
+  const {pet_name, owner, eye_color, gender, image_url, fur_color, breed } = req.body;
+  const { user_id } = res.locals.user;
+  const { lat, lng } = res.locals.location;
+  console.log(lat)
+  console.log(lng)
   
-  const insertChar ="INSERT INTO animals (_id, pet_name, owner, address, eye_color, gender, image_url, fur_color, last_found, type, comments, phone_number) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12) RETURNING *"
-  const value = [_id, pet_name, owner, address, eye_color, gender, image_url, fur_color, last_found, type, comments, phone_number];
+  const insertChar ="INSERT INTO animals (user_id, pet_name, owner, breed, eye_color, gender, image_url, fur_color, status, lat, lng) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11) RETURNING *"
+  // replace 1 with user_id later
+  const value = [ user_id, pet_name, owner, breed, eye_color, gender, image_url, fur_color, false, lat, lng];
 
-  db.query(insertChar, value, (err, result)=>{
-      if (err) {
-        console.log(err);
-      } else {
-        console.log("result", result.rows[0]);
-      // if we want to return single row inserted, uncomment below
-      res.locals.newPet = result.rows;
+  db.query(insertChar, value)
+    .then(data => {
+      res.locals.newPet = data.rows;
+      console.log(res.locals.newPet);
       return next();
-      }
     })
+    .catch(err => next({
+      log: 'Express error in petController.addPet',
+      status: 400,
+      message: {
+        err: `petController.addPet: ERROR: ${err}`
+      }
+    }));
 };
 
 petController.foundPet = (req, res, next) => {
   // getting req.body data of all input
   // name and breed required
-  const {_id} = req.body; 
-  console.log(_id);
-  
-  const insertChar ="DELETE from animals WHERE _id IN ($1) RETURNING *;"
-  const value = [_id];
-
-  db.query(insertChar, value, (err, result)=>{
-      if (err) {
-        console.log(err);
-      } else {
-        console.log("result", result.rows);
-      // if we want to return single row inserted, uncomment below
-      res.locals.newPet = result.rows;
+  console.log(res.locals.user);
+  const { user_id } = res.locals.user;
+  console.log(user_id);
+  db.query('DELETE FROM animals WHERE user_id = $1 RETURNING *;', [user_id])
+    .then(data => {
+      res.locals.foundPet = data.rows;
       return next();
-      }
     })
+    .catch(err => next({
+      log: 'Express error in petController.foundPet',
+      status: 400,
+      message: {
+        err: `petController.foundPet: ERROR: ${err}`
+      }
+    }))
 };
 
 module.exports = petController;
