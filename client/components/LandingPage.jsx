@@ -55,7 +55,7 @@ const CarouselImg = ({ imagesPaths }) => {
     });
     console.log(arrayOfImages);
     return (
-        <Carousel>
+        <Carousel width={'60vw'}>
             {arrayOfImages}
         </Carousel>
     );
@@ -76,13 +76,20 @@ const LandingPage = (props) => {
 
     return (
         <>
-            <div>LandingPage</div>
-            <Button onClick={() => { navigate('/login') }}>Login</Button>
-            <Button onClick={() => { navigate('/signup') }}>Sign Up</Button>
-            <div className='missionStatement'>
-                Mission Statement
+            <div id="landing-page">
+                LandingPage
+                <div>
+                    <Button onClick={() => { navigate('/login') }}>Login</Button>
+                    <Button onClick={() => { navigate('/signup') }}>Sign Up</Button>
+                </div>
+                <div id='mission-statement'>
+                    <h4>Mission Statement</h4>
+                    <p>
+                    We here at Welcome Home Friend love reuniting pet parents and their furry children. It is always so heartbreaking when our beloved furry friends do not return home. With Welcome Home Friend, you can post your lost pet, last known whereabouts, and your contact information in hopes of someone finding them. Of course we never want you to lose your pet, but we are here to make the process of finding them easier!
+                    </p>
+                </div>
+                <CarouselImg imagesPaths={imagesPathsArray} />
             </div>
-            <CarouselImg imagesPaths={imagesPathsArray} />
         </>
     );
     //            <a href='/auth/google'>Sign in with Google</a>

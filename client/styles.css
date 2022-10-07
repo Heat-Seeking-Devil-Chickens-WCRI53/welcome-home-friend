@@ -222,3 +222,17 @@ body {
   background-color: white;
   padding-top: 25px;
 }
+
+#landing-page {
+  display: flex;
+  width: 100%;
+  margin: auto;
+  flex-direction: column;
+  align-items: center;
+}
+
+#mission-statement {
+  text-align: center;
+  padding: 10px;
+  background-color: rgb(212, 211, 211)
+}
