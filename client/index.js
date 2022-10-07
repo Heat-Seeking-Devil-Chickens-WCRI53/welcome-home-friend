@@ -7,18 +7,20 @@ import App from './App.jsx';
 import Login from '../client/components/Login.jsx';
 import SignUp from '../client/components/SignUp.jsx';
 import LandingPage from '../client/components/LandingPage.jsx';
-
+import { PetDataProvider } from "./contexts/PostContext.jsx";
 
 
 render(
-    <BrowserRouter>
-        <Routes>
-            <Route path="/" element={<LandingPage />} />
-            <Route path="/login" element={<Login />} />
-            <Route path="/signup" element={<SignUp />} />
-            <Route path="/app" element={<App />} />
-        </Routes>
-    </BrowserRouter>,
+    <PetDataProvider>
+        <BrowserRouter>
+            <Routes>
+                <Route path="/" element={<LandingPage />} />
+                <Route path="/login" element={<Login />} />
+                <Route path="/signup" element={<SignUp />} />
+                <Route path="/app" element={<App />} />
+            </Routes>
+        </BrowserRouter>
+    </PetDataProvider>,
 
     document.getElementById('root')
 );
