@@ -10,11 +10,12 @@ const ContentContainer = () => {
             <div className="content-container">
                 <SidebarContainer />
                 <div className='map-container'> <Map /></div>
-                <UserPostContainer />
                 <PostContainer />
             </div>
     )
 }
+
+//                <UserPostContainer />
 
 export default ContentContainer;
 

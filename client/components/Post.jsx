@@ -42,11 +42,10 @@ const Post = ( {petObj} ) => {
           <p>Owner is: <b>{petObj.owner ? petObj.owner.toUpperCase() : ""}</b></p>
           <Modal petObj={petObj}></Modal>
         </div>
-        {petObj.isUser && (
+        {(
           <div className="found-button">
             <Button onClick={() => { handleClick() }}>Found</Button>
-          </div>
-        )}
+          </div>)}
       </div>
     )
   }
@@ -54,6 +53,15 @@ const Post = ( {petObj} ) => {
     console.log('ERROR IN POST:', err);
   }
 }
+
+/*
+        {petObj.isUser && (
+          <div className="found-button">
+            <Button onClick={() => { handleClick() }}>Found</Button>
+          </div>
+        )}
+*/
+
 
 export default Post;
 
