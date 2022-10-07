@@ -3,7 +3,7 @@ import TextField from '@mui/material/TextField';
 //import Button from '@mui/material/Button';
 import { useNavigate } from 'react-router-dom';
 //import MyModule from '../styles/MUIComponents.jsx'
-import { Button, inputDiv } from '../styles/MUIComponents.jsx'
+import { Button, inputDiv, inputPasswordDiv} from '../styles/MUIComponents.jsx'
 import { useUserUpdateContext } from "../contexts/PostContext.jsx"
 
 const Login = () => {
@@ -50,7 +50,7 @@ const Login = () => {
             <h4>Login</h4>
             <div className="create-post-inputs">
                 <>{inputDiv('Username', 'login_Username', true)}</>
-                <>{inputDiv('Password', 'login_Password', true)}</>
+                <>{inputPasswordDiv('Password', 'login_Password', true)}</>
             </div>
             <Button onClick={() => navigate('/signup')}>Register</Button>
             <Button onClick={() => { handleClick() }}>Submit</Button>

@@ -1,6 +1,6 @@
 import React, { useTransition } from 'react';
 import TextField from '@mui/material/TextField';
-import { Button, inputDiv , textAreaDiv } from '../styles/MUIComponents.jsx'
+import { Button, inputDiv , textAreaDiv, inputPasswordDiv} from '../styles/MUIComponents.jsx'
 import { useNavigate } from 'react-router-dom';
 import { useUserUpdateContext } from "../contexts/PostContext.jsx"
 
@@ -60,7 +60,7 @@ const SignUp = () => {
             <h4>Username and Password</h4>
             <div className="create-post-inputs">
                 {inputDiv('Username', 'signup_Username', true)}
-                {inputDiv('Password', 'signup_Password', true)}
+                {inputPasswordDiv('Password', 'signup_Password', true)}
             </div>
             <h4>Your Information</h4>
             <div className="create-post-inputs">

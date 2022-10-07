@@ -79,13 +79,13 @@ const LandingPage = (props) => {
             <div>LandingPage</div>
             <Button onClick={() => { navigate('/login') }}>Login</Button>
             <Button onClick={() => { navigate('/signup') }}>Sign Up</Button>
-            <a href='/auth/google'>Sign in with Google</a>
             <div className='missionStatement'>
                 Mission Statement
             </div>
             <CarouselImg imagesPaths={imagesPathsArray} />
         </>
     );
+    //            <a href='/auth/google'>Sign in with Google</a>
 }
 
 
