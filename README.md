@@ -2,7 +2,7 @@
 
 # Welcome Home, Friend!
 
-Welcome Home Friend 2.0 is an app to help lost pet owners find their furry friend once again by sharing information with the community.
+Welcome Home Friend 2.0 is an application used to help lost pet owners find their furry friend once again by sharing information with the community.
 
 ## Built with...
 - React (Hooks/Context)
